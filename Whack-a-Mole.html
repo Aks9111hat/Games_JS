@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whack-a-Mole Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .body_1 {
+            height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            /* background: linear-gradient(to right, rgb(174, 220, 232), rgb(3, 255, 230), rgb(174, 220, 232)); */
+            background: url(https://static.virtubox.io/project/file/20240301-064626-mue1-2_1.png);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-size: 16px;
+            position: relative;
+            width: 100%;
+        }
+
+        .timer_1,
+        .score_1 {
+            font-size: 1.5em;
+            margin-bottom: 0.5em;
+            text-align: center;
+            width: 100%;
+        }
+
+        .board_1 {
+            min-height: 50vmin;
+            width: 50vmin;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2em;
+            overflow: auto;
+            font-size: 1rem;
+            position: relative;
+        }
+
+
+        .hole_css {
+            background-color: rgb(0, 0, 0);
+            border-radius: 50%;
+            box-shadow: inset 0 10px 0 7px rgb(53, 21, 6), inset 0 20px 20px 15px rgba(0, 0, 0, .3), 0 0 5px rgba(0, 0, 0, .5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hole_css .mole_1 {
+            width: 70%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            animation: rise 0.3s ease-out;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateX(-50%) translateY(100%);
+            }
+
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .cursor_1 {
+            height: 5.625em;
+            width: 5em;
+            position: absolute;
+            top: 10em;
+            left: 10em;
+            background-size: 100% 100%;
+            transform: translate(-20%, -20%);
+            transition: transform 0.1s;
+            pointer-events: none;
+        }
+
+        .cursor_1.active {
+            transform: translate(-20%, -20%) rotate(-45deg);
+        }
+
+        .retry-btn_1 {
+            font-size: 1.25em;
+            margin-top: 1em;
+            cursor: pointer;
+        }
+
+        .detail_1 {
+            background: linear-gradient(to right, rgb(105 235 255), rgb(255 216 158), rgb(105 235 255));
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 50%;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            font-size: 1em;
+            position: absolute;
+            top: 2em;
+            margin-bottom: 2em;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .detail_1 h1 {
+            flex: 1;
+            color: black;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            margin-left: 0.5em;
+            margin-right: 0.1em;
+            text-align: left;
+        }
+
+        .retry-btn_1 {
+            flex: 1;
+            border: 1px solid #00c3ff;
+            border-radius: 8px;
+            background: transparent;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            margin-right: 1em;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .retry-btn_1:hover {
+            background-color: rgb(3, 255, 230);
+        }
+
+        .left-div {
+            position: absolute;
+            left: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20rem;
+            height: 15rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25em;
+            color: #ff0000;
+        }
+
+        .left-div p {
+            animation: blink 1s linear infinite;
+            align-items: center;
+            font-size: 1.25em;
+            color: #ff0000;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.4;
+                border-color: #ff0000;
+            }
+        }
+
+        .mid-div {
+            width: 35%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: rgb(0, 0, 0);
+            line-height: 1.5;
+            margin: 0 auto;
+        }
+
+
+        .scroll-text {
+            overflow: hidden;
+            color: rgb(0, 0, 0);
+            font-size: 1.875em;
+            line-height: 1.5;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            animation: scrollText 30s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .scroll-text p {
+            font-family: cursive;
+        }
+
+        @keyframes scrollText {
+            0% {
+                transform: translateY(100%);
+            }
+
+            100% {
+                transform: translateY(-100%);
+            }
+        }
+
+
+
+
+        .right-div {
+            position: absolute;
+            margin-left: 0.125em;
+            right: 7%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20rem;
+            height: 15rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.25em;
+            color: #000000;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        @media screen and (max-width: 768px) {
+            .body_1 {
+                font-size: 14px;
+            }
+
+            .timer_1,
+            .score_1 {
+                font-size: 1.25em;
+            }
+
+            .board_1 {
+                min-height: 30vmin;
+                width: 30vmin;
+            }
+
+            .hole_css {
+                height: 7.5vmin;
+                width: 7.5vmin;
+            }
+
+            .mole_1 {
+                height: 5.25vmin;
+                width: 5.25vmin;
+            }
+
+            .cursor_1 {
+                height: 6.25vmin;
+                width: 5.625vmin;
+                top: 8.75vmin;
+                left: 8.75vmin;
+            }
+
+            .detail_1 {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .detail_1 h1 {
+                margin: 0.5em 0;
+            }
+
+            .left-div,
+            .right-div {
+                position: absolute;
+                background: transparent;
+                border-radius: 8px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.25em;
+                color: #000000;
+                width: fit-content;
+                height: fit-content;
+                top: calc(50% - (height / 2));
+                left: calc(7% - (width / 2));
+            }
+
+            .left-div {
+                left: 5%;
+            }
+
+            .mid-div {
+                width: 80%;
+            }
+
+            .right-div {
+                right: 7%;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .body_1 {
+                font-size: 12px;
+            }
+
+            .timer_1,
+            .score_1 {
+                font-size: 1em;
+            }
+
+            .board_1 {
+                min-height: 25vmin;
+                width: 25vmin;
+            }
+
+            .hole_css {
+                height: 6.25vmin;
+                width: 6.25vmin;
+            }
+
+            .mole_1 {
+                height: 4.5vmin;
+                width: 4.5vmin;
+            }
+
+            .cursor_1 {
+                height: 5vmin;
+                width: 4.5vmin;
+                top: 7vmin;
+                left: 7vmin;
+            }
+
+            .detail_1 {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .detail_1 h1 {
+                margin: 0.5em 0;
+            }
+
+            .left-div,
+            .right-div {
+                position: absolute;
+                background: transparent;
+                border-radius: 8px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-size: 1em;
+                color: #000000;
+                width: fit-content;
+                height: fit-content;
+                top: calc(50% - (height / 2));
+                left: calc(7% - (width / 2));
+            }
+
+            .left-div {
+                left: 3%;
+            }
+
+            .mid-div {
+                width: 90%;
+            }
+
+            .right-div {
+                right: 7%;
+            }
+        }
+
+        .updetails {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="body_1">
+        <div class="detail_1" id="detail_1">
+            <h1 class="timer_1">TIME: <span id="timer_1"><b>15</b>s</span></h1>
+            <h1 class="score_1">SCORE: <span id="score_1">0</span></h1>
+            <button class="retry-btn_1" onclick="location.reload()">RETRY</button>
+        </div>
+        <div class="board_1" id="board_1">
+        </div>
+        <div class="updetails">
+            <div class="left-div" id="stmess">
+                <p>Click anywhere to Start</p>
+                <div class="scmess"></div>
+            </div>
+            <div class="mid-div" id="mid-div">
+                <b class="scroll-text">
+                    <p>Embark on an extraordinary journey as we unveil the tale of a cosmic mole who found itself
+                        stranded
+                        on Earth after a celestial adventure in 1999. Now, the fate of this adorable
+                        explorer rests in your hands! To help our intergalactic friend return home, you must rise to the
+                        challenge and
+                        conquer the High Score.Every successful hit on the mole earns you a fantastic 10 points. Get
+                        ready
+                        to engage in
+                        a thrilling quest and become the champion who sends our mole back to the far reaches of the
+                        galaxy!
+                    </p>
+                </b>
+            </div>
+
+            <div class="right-div" id="high_Score"></div>
+        </div>
+
+        <div class="cursor_1"></div>
+    </div>
+
+    <script>
+        var hole_1 = '';
+        for (var i = 0; i < 9; i++) {
+            hole_1 = hole_1 + `<div class = "hole_css"></div>`;
+        }
+        document.getElementById("board_1").innerHTML = hole_1;
+        const cursor = document.querySelector('.cursor_1')
+        const holes = [...document.querySelectorAll('.hole_css')]
+        const scoreEl = document.querySelector('#score_1')
+        const timerEl = document.querySelector('#timer_1')
+        const sound = new Audio("https://static.virtubox.io/project/file/20240221-114548-qfrs-smash.mp3")
+        let disableClick = false;
+        let score = 0
+        let maxTime = 15;
+        let timer = maxTime;
+        let highScore = 0;
+        let firstClick = true;
+        let arr = [100, 300, 500, 700, 900]
+        let arr1 = [600, 800, 1000, 1200, 1400, 1600, 1800]
+        function run() {
+            const i = Math.floor(Math.random() * holes.length)
+            const hole = holes[i]
+            let timer_i = null
+            arr.sort(() => (Math.random() > 0.5 ? 1 : -1));
+            arr1.sort(() => (Math.random() > 0.5 ? 1 : -1));
+            const img = document.createElement('img')
+            img.classList.add('mole_1')
+            img.src = 'https://static.virtubox.io/project/file/20240226-043203-ty4z-mole_1.png'
+            img.addEventListener('click', () => {
+                if (!disableClick) {
+                    score += 10
+                    sound.play()
+                    scoreEl.textContent = score
+                    img.src = 'https://static.virtubox.io/project/file/20240221-114120-z6y4-mole-whacked.png'
+                    clearTimeout(timer_i)
+                    setTimeout(() => {
+                        hole.removeChild(img)
+                    }, 50)
+                    setTimeout(() => {
+                        run()
+                    }, arr[1])
+                }
+            })
+            hole.appendChild(img)
+            timer_i = setTimeout(() => {
+                hole.removeChild(img)
+                run()
+            }, arr1[1])
+        }
+        function startTimer() {
+            const timerInterval = setInterval(() => {
+                timer--
+                timerEl.textContent = timer + `s`;
+                if (timer === 0) {
+                    clearInterval(timerInterval)
+                    document.getElementById('stmess').style.display = "flex"
+                    document.getElementById('high_Score').style.display = "flex"
+                    document.getElementById('stmess').innerHTML = `<div style="text-align: center;"><h3>Game Over!</h3><br/><p>Your score is: ${score}.</p> <p>Click Retry to Play Again.</p></div>`;
+                    disableClick = true;
+                    if (score > highScore) {
+                        highScore = score;
+                        localStorage.setItem("highScore", highScore);
+                        highScore = localStorage.getItem('highScore');
+                        document.querySelector(".right-div").textContent = "High Score: " + highScore;
+                    }
+                }
+            }, 1000)
+        }
+        if (localStorage.getItem('highScore')) {
+            highScore = localStorage.getItem('highScore');
+        } else {
+            highScore = 0;
+        }
+        document.querySelector(".right-div").textContent = "High Score: " + highScore;
+        run()
+        document.getElementById("board_1").style.display = "none";
+        document.getElementById("detail_1").style.display = "none";
+        window.addEventListener('click', () => {
+            if (firstClick) {
+                startTimer();
+                document.getElementById('stmess').innerHTML = ""
+                document.getElementById('stmess').style.display = "none"
+                document.getElementById('high_Score').style.display = "none"
+                document.getElementById('mid-div').style.display = "none"
+                document.getElementById("board_1").style.display = "grid";
+                document.getElementById("detail_1").style.display = "flex";
+
+
+                firstClick = false;
+            }
+        })
+        window.addEventListener('mousemove', e => {
+            cursor.style.top = e.pageY + 'px'
+            cursor.style.left = e.pageX + 'px'
+        })
+        window.addEventListener('mousedown', () => {
+            cursor.classList.add('active')
+        })
+        window.addEventListener('mouseup', () => {
+            cursor.classList.remove('active')
+        })
+    </script>
+</body>
+
+</html>
